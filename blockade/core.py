@@ -69,7 +69,8 @@ class Blockade(object):
 
         # Create custom network to allow docker resolve container hostnames
         # via built-in DNS server.
-        response = self.docker_client.create_network("ourtestnet")
+        blockade_net_id = self.state_factory.get_blockade_net_id()
+        response = self.docker_client.create_network(blockade_net_id)
         if response['Warning']:
             vprint(response['Warning'])
         self.docker_net_id = response['Id']
@@ -234,7 +235,12 @@ class Blockade(object):
             self.docker_client.stop(container_id, timeout=DEFAULT_KILL_TIMEOUT)
             self.docker_client.remove_container(container_id)
 
-        self.docker_client.remove_network("ourtestnet")
+        blockade_net_id = self.state_factory.get_blockade_net_id()
+        try:
+            self.docker_client.remove_network(blockade_net_id)
+        except docker.errors.APIError as err:
+            if err.response.status_code != 404:
+                raise
 
         self.network.restore(state.blockade_id)
         self.state_factory.destroy()

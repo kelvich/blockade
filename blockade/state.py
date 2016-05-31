@@ -99,6 +99,11 @@ class BlockadeStateFactory(object):
         return blockade_id
 
     @staticmethod
+    def get_blockade_net_id(cwd=None):
+        '''Generate a new blockade nework ID based on the blockade_id'''
+        return "%s_net" % BlockadeStateFactory.get_blockade_id()
+
+    @staticmethod
     def initialize(containers, blockade_id=None):
         '''
         Initialize a new state file with the given contents.
