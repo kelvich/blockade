@@ -131,6 +131,7 @@ class Blockade(object):
             dns=container.dns,
             port_bindings=port_bindings,
             network_mode=network_mode,
+            ulimit='core=1000000',
             links=links)
 
         def create_container():
